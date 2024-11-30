@@ -6,7 +6,7 @@ import sklearn
 import os
 
 # Load the trained model (ensure the model is saved as a pickle file)
-model = pickle.load(open(gbm.pkl, 'rb'))  # Path to your model
+model = pickle.load(open('gbm.pkl', 'rb'))  # Path to your model
 
 app = Flask(__name__)
 
