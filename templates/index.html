@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>SleepFit Life Style and Sleep Analysis</title>
+    <style>
+        body {
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #0400ff; /* Light Blue Background */
+            color: #000000;
+        }
+        header {
+            background: #0d00ff;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 36px;
+            font-weight: bolder;
+        }
+        header p {
+            font-size: 18px;
+            font-family: 'Cursive', sans-serif;
+        }
+        main {
+            padding: 20px;
+            text-align: center;
+        }
+        form {
+            max-width: 600px;
+            margin: auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        form label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: bold; /* Bold text for labels */
+        }
+        form select, form input, form button {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 2px solid #000000;
+        }
+        form button {
+            background: #0037ff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        form button:hover {
+            background: #0800ff;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: white;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #ffffff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>SleepFit Life Style and Sleep Analysis</h1>
+        <p>Know your sleeping health and get personalized insights.</p>
+    </header>
+    <main>
+        <form id="healthForm">
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+
+            <label for="occupation">Occupation:</label>
+            <select id="occupation" name="occupation" required>
+                <option value="Doctor">Doctor</option>
+                <option value="Teacher">Teacher</option>
+                <option value="Nurse">Nurse</option>
+                <option value="Engineer">Engineer</option>
+                <option value="Accountant">Accountant</option>
+                <option value="Lawyer">Lawyer</option>
+                <option value="Salesperson">Salesperson</option>
+                <option value="Others">Others</option>
+            </select>
+
+            <label for="bmi">BMI Category:</label>
+            <select id="bmi" name="bmi" required>
+                <option value="Normal Weight">Normal Weight</option>
+                <option value="Overweight">Overweight</option>
+                <option value="Obese">Obese</option>
+            </select>
+
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" min="27" max="59" required>
+
+            <label for="sleep_duration">Sleep Duration (hours):</label>
+            <input type="number" id="sleep_duration" name="sleep_duration" step="0.1" min="5.8" max="8.5" required>
+
+            <label for="quality_sleep">Quality of Sleep (1-10):</label>
+            <input type="number" id="quality_sleep" name="quality_sleep" min="4" max="9" required>
+
+            <label for="physical_activity">Physical Activity Level:</label>
+            <input type="number" id="physical_activity" name="physical_activity" min="30" max="90" required>
+
+            <label for="stress_level">Stress Level (1-10):</label>
+            <input type="number" id="stress_level" name="stress_level" min="3" max="8" required>
+
+            <label for="heart_rate">Heart Rate (bpm):</label>
+            <input type="number" id="heart_rate" name="heart_rate" min="65" max="86" required>
+
+            <label for="daily_steps">Daily Steps:</label>
+            <input type="number" id="daily_steps" name="daily_steps" min="3000" max="10000" required>
+
+            <label for="systolic">Systolic Blood Pressure:</label>
+            <input type="number" id="systolic" name="systolic" min="115" max="142" required>
+
+            <label for="diastolic">Diastolic Blood Pressure:</label>
+            <input type="number" id="diastolic" name="diastolic" min="75" max="95" required>
+
+            <button type="button" onclick="predictHealth()">Predict</button>
+        </form>
+
+        <div id="result"></div>
+    </main>
+    <footer>
+        <p>© 2024 SleepFit Insights</p>
+    </footer>
+    <script>
+        function predictHealth() {
+            // Collect form inputs
+            const gender = document.getElementById("gender").value;
+            const occupation = document.getElementById("occupation").value;
+            const bmi = document.getElementById("bmi").value;
+            const age = document.getElementById("age").value;
+            const sleepDuration = document.getElementById("sleep_duration").value;
+            const qualitySleep = document.getElementById("quality_sleep").value;
+            const physicalActivity = document.getElementById("physical_activity").value;
+            const stressLevel = document.getElementById("stress_level").value;
+            const heartRate = document.getElementById("heart_rate").value;
+            const dailySteps = document.getElementById("daily_steps").value;
+            const systolic = document.getElementById("systolic").value;
+            const diastolic = document.getElementById("diastolic").value;
+
+            // Encode categorical data
+            const genderMap = { "Male": 1, "Female": 0 };
+            const occupationMap = {
+                "Others": 7, "Doctor": 1, "Teacher": 3, "Nurse": 0,
+                "Engineer": 2, "Accountant": 5, "Lawyer": 4, "Salesperson": 6
+            };
+            const bmiMap = { "Normal Weight": 0, "Overweight": 1, "Obese": 2 };
+
+            const encodedGender = genderMap[gender];
+            const encodedOccupation = occupationMap[occupation];
+            const encodedBmi = bmiMap[bmi];
+
+            // Send data to Flask API
+            const data = {
+                gender: encodedGender,
+                occupation: encodedOccupation,
+                bmi: encodedBmi,
+                age: parseInt(age),
+                sleep_duration: parseFloat(sleepDuration),
+                quality_sleep: parseInt(qualitySleep),
+                physical_activity: parseInt(physicalActivity),
+                stress_level: parseInt(stressLevel),
+                heart_rate: parseInt(heartRate),
+                daily_steps: parseInt(dailySteps),
+                systolic: parseInt(systolic),
+                diastolic: parseInt(diastolic)
+            };
+
+            fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => response.json())
+            .then(result => {
+                // Display the result from the backend
+                document.getElementById("result").innerHTML = `Your predicted sleep disorder is: <strong>${result.result}</strong>`;
+            })
+            .catch(error => {
+                document.getElementById("result").innerHTML = "Error predicting sleep disorder.";
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
+
+
